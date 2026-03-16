@@ -29,8 +29,8 @@
   },
   "lint-staged": {
     "apps/**/*.{ts,tsx,js}": [
-      "npm run format",
-      "npm run lint"
+      "npx prettier --write",
+      "npx eslint --fix"
     ]
   }
 }
