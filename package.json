@@ -1,0 +1,36 @@
+{
+  "name": "critic-lib",
+  "version": "1.0.0",
+  "author": "EcchiGrill",
+  "workspaces": {
+    "packages": [
+      "apps/*"
+    ]
+  },
+  "scripts": {
+    "format": "prettier \"apps/**/*.{ts,tsx,js,json}\" --write",
+    "lint": "npx nx run-many -t lint",
+    "build": "npx nx run-many -t build",
+    "prepare": "husky install"
+  },
+  "private": true,
+  "devDependencies": {
+    "@nx/js": "22.5.1",
+    "@swc-node/register": "1.11.1",
+    "@swc/core": "1.15.8",
+    "@swc/helpers": "0.5.18",
+    "eslint": "^10.0.2",
+    "husky": "9.1",
+    "lint-staged": "^16.3.1",
+    "nx": "22.5.1",
+    "prettier": "^2.6.2",
+    "tslib": "^2.3.0",
+    "typescript": "~5.9.2"
+  },
+  "lint-staged": {
+    "apps/**/*.{ts,tsx,js}": [
+      "npm run format",
+      "npm run lint"
+    ]
+  }
+}
