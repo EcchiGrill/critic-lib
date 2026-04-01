@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
@@ -11,10 +11,17 @@ import { ReviewService } from './review.service';
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getReviews(@CurrentUser() user: JwtPayload) {
+    return this.reviewService.getReviews(user.sub);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  create(@Body() body: CreateReviewDto, @CurrentUser() user: JwtPayload) {
+  createReview(@Body() body: CreateReviewDto, @CurrentUser() user: JwtPayload) {
     return this.reviewService.createReview(body, user.sub);
   }
 }

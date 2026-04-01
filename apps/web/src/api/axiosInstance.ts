@@ -1,11 +1,13 @@
-import { getCookie } from '@/lib/utils/getCookie';
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import { getSession } from 'next-auth/react';
 
 const requestInterceptor = async (config: InternalAxiosRequestConfig) => {
-  const token = getCookie('token');
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  if (typeof window !== 'undefined') {
+    const session = await getSession();
+    const token = session?.user?.accessToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   return config;

@@ -18,6 +18,10 @@ import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { JwtPayload } from '../auth/types/jwtPayload';
+import { FavoriteBookDto } from './dto/favorite-book.dto';
+import { ReadBookDto } from './dto/read-book.dto';
 
 @ApiTags('books')
 @Controller('books')
@@ -27,6 +31,20 @@ export class BookController {
   @Get()
   getBooks() {
     return this.bookService.getBooks();
+  }
+
+  @Get('favorite')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getFavoriteBooks(@CurrentUser() user: JwtPayload) {
+    return this.bookService.getFavoriteBooks(user.sub);
+  }
+
+  @Get('read')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getReadBooks(@CurrentUser() user: JwtPayload) {
+    return this.bookService.getReadBooks(user.sub);
   }
 
   @Post()
@@ -67,6 +85,28 @@ export class BookController {
   @ApiBearerAuth()
   updateBook(@Param('id') id: string, @Body() body: UpdateBookDto) {
     return this.bookService.updateBook(id, body);
+  }
+
+  @Patch(':id/favorite')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  favoriteBook(
+    @Param('id') id: string,
+    @Body() body: FavoriteBookDto,
+    @CurrentUser() user: JwtPayload
+  ) {
+    return this.bookService.favoriteBook(id, user.sub, body);
+  }
+
+  @Patch(':id/read')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  readBook(
+    @Param('id') id: string,
+    @Body() body: ReadBookDto,
+    @CurrentUser() user: JwtPayload
+  ) {
+    return this.bookService.readBook(id, user.sub, body);
   }
 
   @Delete(':id')
