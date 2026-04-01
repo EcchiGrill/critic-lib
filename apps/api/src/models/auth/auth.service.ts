@@ -109,7 +109,7 @@ export class AuthService {
   private buildAuthResponse(userId: string, email: string) {
     const payload: JwtPayload = { sub: userId, email };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }
