@@ -19,9 +19,21 @@ const userPublicSelect = {
   username: true,
   email: true,
   avatar: true,
-  favoriteBooks: true,
-  readBooks: true,
-  reviews: true,
+  favoriteBooks: {
+    select: {
+      id: true,
+    },
+  },
+  readBooks: {
+    select: {
+      id: true,
+    },
+  },
+  reviews: {
+    select: {
+      id: true,
+    },
+  },
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect;
@@ -73,7 +85,12 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return user;
+    return {
+      ...user,
+      favoriteBooks: user.favoriteBooks.map((book) => book.id),
+      readBooks: user.readBooks.map((book) => book.id),
+      reviews: user.reviews.map((review) => review.id),
+    };
   }
 
   async updateProfile(userId: string, body: UpdateMeDto) {

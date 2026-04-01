@@ -26,6 +26,13 @@ const reviewInclude = {
 export class ReviewService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getReviews(userId: string) {
+    return this.prisma.review.findMany({
+      where: { userId },
+      include: reviewInclude,
+    });
+  }
+
   async createReview(body: CreateReviewDto, jwtUserId: string) {
     await this.ensureBookExists(body.bookId);
     return this.prisma.review.create({

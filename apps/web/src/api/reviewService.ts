@@ -17,6 +17,11 @@ export class ReviewService {
     ReviewService.instance = this;
   }
 
+  async getReviews(): Promise<Review[]> {
+    const { data } = await api.get<Review[]>('/reviews');
+    return data;
+  }
+
   async createReview(body: CreateReviewBody): Promise<Review> {
     const { data } = await api.post<Review>('/reviews', body);
     return data;

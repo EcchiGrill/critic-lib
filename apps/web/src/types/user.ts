@@ -1,14 +1,11 @@
-import type { Book } from './book';
-import type { Review } from './review';
-
 export interface User {
   id: string;
   username: string;
   email: string;
   avatar: string | null;
-  favoriteBooks: Book[];
-  readBooks: Book[];
-  reviews: Review[];
+  favoriteBooks: string[];
+  readBooks: string[];
+  reviews: string[];
   createdAt: string;
   updatedAt: string;
 }

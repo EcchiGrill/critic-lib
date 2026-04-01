@@ -9,6 +9,8 @@ import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { FavoriteBookDto } from './dto/favorite-book.dto';
+import { ReadBookDto } from './dto/read-book.dto';
 
 const bookInclude = {
   author: true,
@@ -60,11 +62,23 @@ export class BookService {
   }
 
   async getBooks() {
-    const books = await this.prisma.book.findMany({
-      orderBy: { createdAt: 'desc' },
+    return this.prisma.book.findMany({
       include: bookInclude,
     });
-    return books;
+  }
+
+  async getFavoriteBooks(userId: string) {
+    return this.prisma.book.findMany({
+      where: { usersFavorite: { some: { id: userId } } },
+      include: bookInclude,
+    });
+  }
+
+  async getReadBooks(userId: string) {
+    return this.prisma.book.findMany({
+      where: { usersRead: { some: { id: userId } } },
+      include: bookInclude,
+    });
   }
 
   async getBook(id: string) {
@@ -105,6 +119,50 @@ export class BookService {
       where: { id },
       data: { cover: url },
       include: bookInclude,
+    });
+  }
+
+  async favoriteBook(id: string, userId: string, body: FavoriteBookDto) {
+    const { isFavorite } = body;
+
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+      include: { usersFavorite: true },
+    });
+
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
+
+    return this.prisma.book.update({
+      where: { id },
+      data: {
+        usersFavorite: isFavorite
+          ? { connect: { id: userId } }
+          : { disconnect: { id: userId } },
+      },
+    });
+  }
+
+  async readBook(id: string, userId: string, body: ReadBookDto) {
+    const { isRead } = body;
+
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+      include: { usersRead: true },
+    });
+
+    if (!book) {
+      throw new NotFoundException('Book not found');
+    }
+
+    return this.prisma.book.update({
+      where: { id },
+      data: {
+        usersRead: isRead
+          ? { connect: { id: userId } }
+          : { disconnect: { id: userId } },
+      },
     });
   }
 

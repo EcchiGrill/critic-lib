@@ -11,6 +11,14 @@ interface CreateBookBody {
   genreIds?: string[];
 }
 
+interface FavoriteBookBody {
+  isFavorite: boolean;
+}
+
+interface ReadBookBody {
+  isRead: boolean;
+}
+
 export class BookService {
   private static instance: BookService;
 
@@ -23,6 +31,16 @@ export class BookService {
 
   async getBooks(): Promise<Book[]> {
     const { data } = await api.get<Book[]>('/books');
+    return data;
+  }
+
+  async getFavoriteBooks(): Promise<Book[]> {
+    const { data } = await api.get<Book[]>('/books/favorite');
+    return data;
+  }
+
+  async getReadBooks(): Promise<Book[]> {
+    const { data } = await api.get<Book[]>('/books/read');
     return data;
   }
 
@@ -43,6 +61,16 @@ export class BookService {
 
   async deleteBook(id: string): Promise<void> {
     await api.delete(`/books/${id}`);
+  }
+
+  async favoriteBook(id: string, body: FavoriteBookBody): Promise<Book> {
+    const { data } = await api.patch<Book>(`/books/${id}/favorite`, body);
+    return data;
+  }
+
+  async readBook(id: string, body: ReadBookBody): Promise<Book> {
+    const { data } = await api.patch<Book>(`/books/${id}/read`, body);
+    return data;
   }
 
   async uploadCover(id: string, file: File): Promise<Book> {

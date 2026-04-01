@@ -4,10 +4,7 @@ import { User as UserType } from '@/types/user';
 import { AuthService } from '@/api/authService';
 import { sessionMaxAge } from './sessionMaxAge';
 
-type AuthUser = Omit<
-  UserType,
-  'favoriteBooks' | 'readBooks' | 'reviews' | 'updatedAt'
-> & { accessToken: string };
+type AuthUser = Omit<UserType, 'updatedAt'> & { accessToken: string };
 
 declare module 'next-auth' {
   interface Session {
@@ -50,6 +47,9 @@ export const authOptions: AuthOptions = {
         return {
           id: profile.id,
           email: profile.email,
+          favoriteBooks: profile.favoriteBooks,
+          readBooks: profile.readBooks,
+          reviews: profile.reviews,
           username: profile.username,
           avatar: profile.avatar,
           createdAt: profile.createdAt,
@@ -70,7 +70,9 @@ export const authOptions: AuthOptions = {
       }
 
       if (trigger === 'update' && token.user?.accessToken) {
-        const updatedUser = await authService.getProfile();
+        const updatedUser = await authService.getProfile(
+          token.user.accessToken
+        );
 
         if (updatedUser) {
           token.user = {
@@ -80,6 +82,9 @@ export const authOptions: AuthOptions = {
             avatar: updatedUser.avatar,
             createdAt: updatedUser.createdAt,
             email: updatedUser.email,
+            favoriteBooks: updatedUser.favoriteBooks,
+            readBooks: updatedUser.readBooks,
+            reviews: updatedUser.reviews,
           };
         }
       }
