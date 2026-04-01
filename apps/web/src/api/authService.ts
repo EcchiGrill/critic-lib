@@ -60,8 +60,8 @@ export class AuthService {
 
   async uploadAvatar(avatar: File): Promise<User> {
     const formData = new FormData();
-    formData.append('avatar', avatar);
-    return api.post('/auth/me/avatar', formData, {
+    formData.append('file', avatar);
+    return await api.post('/auth/me/avatar', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

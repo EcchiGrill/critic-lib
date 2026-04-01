@@ -64,7 +64,7 @@ export const BookPage = ({
   } = useForm<ReviewData>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
-      rating: 1,
+      rating: 5,
       comment: '',
     },
   });
@@ -137,7 +137,7 @@ export const BookPage = ({
               src={cover}
               alt={title}
               sx={{
-                width: { xs: 160, sm: 200 },
+                width: 250,
                 borderRadius: 2,
                 boxShadow: 4,
                 display: 'block',
@@ -276,7 +276,7 @@ export const BookPage = ({
 
       {author.bio && (
         <Paper variant="outlined" sx={{ p: 3, mb: 5, borderRadius: 2 }}>
-          <Typography variant="h6" gutterBottom>
+          <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
             About the Author
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
