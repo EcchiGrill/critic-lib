@@ -25,6 +25,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       '@typescript-eslint/no-empty-object-type': 'off',
       'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/set-state-in-effect': 'off',
     },
   },
 ];

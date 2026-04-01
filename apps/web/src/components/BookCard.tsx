@@ -54,6 +54,7 @@ export const BookCard = ({
         flexDirection: 'column',
         position: 'relative',
         maxWidth: '350px',
+        height: '100%',
       }}
     >
       <CardActionArea
@@ -115,7 +116,15 @@ export const BookCard = ({
           )}
 
           {genres.length > 0 && (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 0.5,
+                mt: 1,
+                alignItems: 'center',
+              }}
+            >
               {genres.slice(0, 2).map((genre) => (
                 <Chip
                   key={genre.id}
