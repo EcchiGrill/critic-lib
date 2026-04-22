@@ -9,6 +9,7 @@ import { ContainedButton } from './ui/Button';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { headerHeight } from '@/constants/headerHeight';
+import { extractInitials } from '@/lib/utils/extractInitials';
 import Image from 'next/image';
 
 interface HeaderProps {
@@ -38,7 +39,6 @@ export const Header = ({ currentPage }: HeaderProps) => {
         </IconButton>
       </Stack>
       <Typography
-        variant="h4"
         color="primary"
         fontWeight={400}
         textTransform="uppercase"
@@ -57,7 +57,9 @@ export const Header = ({ currentPage }: HeaderProps) => {
               <Avatar
                 src={user.avatar ?? ''}
                 sx={{ width: '28px', height: '28px' }}
-              />
+              >
+                {extractInitials(user.username)}
+              </Avatar>
             </IconButton>
           ) : (
             <ContainedButton onClick={() => router.push('/sign-in')}>

@@ -53,7 +53,7 @@ export const BookCard = ({
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        maxWidth: '350px',
+        width: '320px',
         height: '100%',
       }}
     >

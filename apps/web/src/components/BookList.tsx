@@ -37,9 +37,20 @@ export const BookList = ({ books }: BookListProps) => {
   };
 
   return (
-    <Grid container spacing={5}>
+    <Grid
+      container
+      spacing={5}
+      justifyContent={{
+        xs: 'center',
+        sm: 'start',
+      }}
+    >
       {books.map((book) => (
-        <Grid size={{ md: 4, lg: 4, xl: 3, xxl: 2 }} key={book.id}>
+        <Grid
+          size={{ xs: 10, sm: 6, md: 5, lg: 4, xl: 3, xxl: 2 }}
+          key={book.id}
+          justifyItems="center"
+        >
           <BookCard
             book={book}
             favoriteBooks={user?.favoriteBooks || []}

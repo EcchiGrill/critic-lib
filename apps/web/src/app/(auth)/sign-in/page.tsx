@@ -14,10 +14,14 @@ import signInImage from '../../../../public/sign-in.jpg';
 import { LabeledTextfield } from '@/components/ui/LabeledTextField';
 import { ContainedButton } from '@/components/ui/Button';
 import { Link } from '@/components/ui/Link';
+import Divider from '@mui/material/Divider';
+import GoogleIcon from '@mui/icons-material/Google';
+import Stack from '@mui/material/Stack';
 
 export default function SignIn() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -42,7 +46,7 @@ export default function SignIn() {
       });
 
       if (result?.error) {
-        setError('Invalid email or password.');
+        setError(result.error);
         return;
       }
 
@@ -50,6 +54,11 @@ export default function SignIn() {
     } catch {
       setError('An unexpected error occurred. Please try again.');
     }
+  };
+
+  const handleGoogleAuth = async () => {
+    setIsGoogleLoading(true);
+    await signIn('google', { redirect: true, callbackUrl: '/' });
   };
 
   return (
@@ -91,24 +100,53 @@ export default function SignIn() {
             errorMessage={errors.email?.message}
           />
 
-          <LabeledTextfield
-            id="password"
-            label="Password"
-            required
-            type="password"
-            placeholder="at least 8 characters"
-            {...register('password')}
-            errorMessage={errors.password?.message || error}
-          />
+          <Stack alignItems="flex-end" gap={1.5}>
+            <LabeledTextfield
+              id="password"
+              label="Password"
+              required
+              type="password"
+              placeholder="at least 8 characters"
+              {...register('password')}
+              errorMessage={errors.password?.message || error}
+            />
+            <Link href="/forgot-password" fontSize="14px">
+              Forgot password?
+            </Link>
+          </Stack>
 
-          <ContainedButton
-            loading={isSubmitting}
-            type="submit"
-            size="large"
-            sx={{ width: '100%', mt: 2 }}
-          >
-            Sign in
-          </ContainedButton>
+          <Stack>
+            <ContainedButton
+              loading={isSubmitting}
+              type="submit"
+              size="large"
+              sx={{ width: '100%', mt: 2 }}
+            >
+              Sign in
+            </ContainedButton>
+
+            <Box sx={{ my: 3 }}>
+              <Divider>
+                <Typography variant="caption" color="textSecondary">
+                  OR
+                </Typography>
+              </Divider>
+            </Box>
+
+            <ContainedButton
+              loading={isGoogleLoading}
+              onClick={handleGoogleAuth}
+              startIcon={<GoogleIcon />}
+              size="large"
+              color="secondary"
+              sx={{
+                width: '100%',
+                border: '1px solid #e0e0e0',
+              }}
+            >
+              Continue with Google
+            </ContainedButton>
+          </Stack>
         </Box>
       </AuthContainer>
 

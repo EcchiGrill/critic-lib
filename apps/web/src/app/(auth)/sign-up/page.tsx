@@ -14,6 +14,7 @@ import { AuthService } from '@/api/authService';
 import { Link } from '@/components/ui/Link';
 import { LabeledTextfield } from '@/components/ui/LabeledTextField';
 import { ContainedButton } from '@/components/ui/Button';
+import { toast } from 'react-toastify';
 
 const authService = new AuthService();
 
@@ -41,6 +42,9 @@ export default function SignUp() {
 
     try {
       await authService.register(username, email, password);
+      toast.info('Email verification sent to ' + email, {
+        position: 'top-center',
+      });
       router.push('/sign-in');
     } catch (error) {
       console.error(error);
