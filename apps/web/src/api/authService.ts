@@ -7,8 +7,20 @@ interface UpdateUserBody {
   password?: string;
 }
 
+interface GoogleOAuthBody {
+  googleId: string;
+  email: string;
+  name: string;
+  picture?: string;
+}
+
 interface TokenResponse {
   accessToken: string;
+}
+
+interface RegisterResponse {
+  message: string;
+  email: string;
 }
 
 export class AuthService {
@@ -25,8 +37,8 @@ export class AuthService {
     username: string,
     email: string,
     password: string
-  ): Promise<TokenResponse> {
-    const { data } = await api.post<TokenResponse>('/auth/register', {
+  ): Promise<RegisterResponse> {
+    const { data } = await api.post<RegisterResponse>('/auth/register', {
       username,
       email,
       password,
@@ -39,6 +51,14 @@ export class AuthService {
       email,
       password,
     });
+    return data;
+  }
+
+  async googleOAuth(profile: GoogleOAuthBody): Promise<TokenResponse> {
+    const { data } = await api.post<TokenResponse>(
+      '/auth/google/callback',
+      profile
+    );
     return data;
   }
 
@@ -66,5 +86,40 @@ export class AuthService {
         'Content-Type': 'multipart/form-data',
       },
     });
+  }
+
+  async confirmEmail(token: string): Promise<{ message: string }> {
+    const { data } = await api.post<{ message: string }>(
+      '/auth/confirm-email',
+      { token }
+    );
+    return data;
+  }
+
+  async resendConfirmation(email: string): Promise<{ message: string }> {
+    const { data } = await api.post<{ message: string }>(
+      '/auth/resend-confirmation',
+      { email }
+    );
+    return data;
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const { data } = await api.post<{ message: string }>(
+      '/auth/forgot-password',
+      { email }
+    );
+    return data;
+  }
+
+  async resetPassword(
+    token: string,
+    password: string
+  ): Promise<{ message: string }> {
+    const { data } = await api.post<{ message: string }>(
+      '/auth/reset-password',
+      { token, password }
+    );
+    return data;
   }
 }

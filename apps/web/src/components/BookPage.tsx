@@ -282,7 +282,6 @@ export const BookPage = ({
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
             <Avatar
               sx={{
-                bgcolor: 'primary.main',
                 width: 48,
                 height: 48,
                 flexShrink: 0,
@@ -324,7 +323,6 @@ export const BookPage = ({
                   <Avatar
                     src={review.user.avatar ?? ''}
                     sx={{
-                      bgcolor: 'secondary.main',
                       width: 40,
                       height: 40,
                       flexShrink: 0,

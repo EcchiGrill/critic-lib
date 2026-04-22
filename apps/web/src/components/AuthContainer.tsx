@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 
 interface AuthContainerProps {
   title: string;
-  description?: string;
+  description?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
 }

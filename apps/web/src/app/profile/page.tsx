@@ -31,6 +31,14 @@ import { AuthService } from '@/api/authService';
 import { IconButton } from '@/components/ui/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  changePasswordSchema,
+  type ChangePasswordData,
+} from '@/schema/change-password.schema';
+import Alert from '@mui/material/Alert';
 
 const authService = new AuthService();
 const reviewService = new ReviewService();
@@ -71,7 +79,17 @@ export default function ProfilePage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([]);
   const [readBooks, setReadBooks] = useState<Book[]>([]);
+  const [isSuccess, setIsSuccess] = useState(false);
   const uploadAvatarRef = useRef<HTMLInputElement>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<ChangePasswordData>({
+    resolver: zodResolver(changePasswordSchema),
+  });
 
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -93,6 +111,17 @@ export default function ProfilePage() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const onSubmitPasswordChange = async (data: ChangePasswordData) => {
+    await authService
+      .updateProfile({
+        password: data.password!,
+      })
+      .then(() => {
+        setIsSuccess(true);
+        reset();
+      });
   };
 
   useEffect(() => {
@@ -139,56 +168,67 @@ export default function ProfilePage() {
               display: 'flex',
               gap: 3,
               alignItems: 'center',
+              justifyContent: { xs: 'center', md: 'space-between' },
               flexWrap: 'wrap',
             }}
           >
-            <Box sx={{ position: 'relative' }}>
-              <input
-                ref={uploadAvatarRef}
-                style={{ display: 'none' }}
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarUpload}
-              />
-              <Avatar
-                src={user.avatar ?? ''}
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              gap={4}
+              alignItems="center"
+            >
+              <Box sx={{ position: 'relative' }}>
+                <input
+                  ref={uploadAvatarRef}
+                  style={{ display: 'none' }}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                />
+                <Avatar
+                  src={user.avatar ?? ''}
+                  sx={{
+                    width: 100,
+                    height: 100,
+                    bgcolor: 'primary.main',
+                    flexShrink: 0,
+                  }}
+                >
+                  {extractInitials(user.username)}
+                </Avatar>
+                <StyledIconButton
+                  onClick={() => uploadAvatarRef.current?.click()}
+                >
+                  <EditIcon />
+                </StyledIconButton>
+              </Box>
+
+              <Box
                 sx={{
-                  width: 100,
-                  height: 100,
-                  bgcolor: 'primary.main',
-                  flexShrink: 0,
+                  flex: 1,
+                  minWidth: 0,
                 }}
               >
-                {extractInitials(user.username)}
-              </Avatar>
-              <StyledIconButton
-                onClick={() => uploadAvatarRef.current?.click()}
-              >
-                <EditIcon />
-              </StyledIconButton>
-            </Box>
-
-            <Box
-              sx={{
-                flex: 1,
-                minWidth: 0,
-              }}
-            >
-              <Stack direction="column" gap={1} alignItems="flex-start">
-                <TextField
-                  variant="standard"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  onBlur={handleEditUsername}
-                />
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {user.email}
+                <Stack direction="column" gap={1} alignItems="flex-start">
+                  <TextField
+                    variant="standard"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    onBlur={handleEditUsername}
+                  />
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    {user.email}
+                  </Typography>
+                </Stack>
+                <Typography variant="caption" color="text.disabled">
+                  Member since {formatDate(user.createdAt)}
                 </Typography>
-              </Stack>
-              <Typography variant="caption" color="text.disabled">
-                Member since {formatDate(user.createdAt)}
-              </Typography>
-            </Box>
+              </Box>
+            </Stack>
 
             <Stack
               gap={3}
@@ -261,6 +301,12 @@ export default function ProfilePage() {
               iconPosition="start"
               sx={{ minHeight: 48, textTransform: 'none' }}
             />
+            <Tab
+              label="Settings"
+              icon={<SettingsIcon fontSize="small" />}
+              iconPosition="start"
+              sx={{ minHeight: 48, textTransform: 'none' }}
+            />
           </Tabs>
 
           <Box role="tabpanel" hidden={tab !== 0} sx={{ pt: 3 }}>
@@ -285,6 +331,73 @@ export default function ProfilePage() {
             ) : (
               <RecentReviews reviews={reviews} />
             )}
+          </Box>
+
+          <Box role="tabpanel" hidden={tab !== 3} sx={{ pt: 3 }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                p: { xs: 3, md: 4 },
+                borderRadius: 3,
+                maxWidth: 600,
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                Change Password
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Update your password to keep your account secure
+              </Typography>
+
+              {isSuccess && (
+                <Alert severity="success" sx={{ mb: 3 }}>
+                  Password changed successfully!
+                </Alert>
+              )}
+
+              <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmitPasswordChange)}
+                noValidate
+              >
+                <Stack spacing={3}>
+                  <TextField
+                    label="Current Password"
+                    type="password"
+                    fullWidth
+                    {...register('currentPassword')}
+                    error={!!errors.currentPassword}
+                    helperText={errors.currentPassword?.message}
+                  />
+
+                  <TextField
+                    label="New Password"
+                    type="password"
+                    fullWidth
+                    {...register('password')}
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                  />
+
+                  <TextField
+                    label="Confirm New Password"
+                    type="password"
+                    fullWidth
+                    {...register('confirmPassword')}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message}
+                  />
+
+                  <ContainedButton
+                    type="submit"
+                    loading={isSubmitting}
+                    sx={{ alignSelf: 'flex-start' }}
+                  >
+                    Update Password
+                  </ContainedButton>
+                </Stack>
+              </Box>
+            </Paper>
           </Box>
         </Box>
       </>
