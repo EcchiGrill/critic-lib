@@ -362,15 +362,6 @@ export default function ProfilePage() {
               >
                 <Stack spacing={3}>
                   <TextField
-                    label="Current Password"
-                    type="password"
-                    fullWidth
-                    {...register('currentPassword')}
-                    error={!!errors.currentPassword}
-                    helperText={errors.currentPassword?.message}
-                  />
-
-                  <TextField
                     label="New Password"
                     type="password"
                     fullWidth

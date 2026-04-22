@@ -28,6 +28,8 @@ const userPublicSelect = {
   username: true,
   email: true,
   avatar: true,
+  role: true,
+  isEmailConfirmed: true,
   favoriteBooks: {
     select: {
       id: true,
