@@ -85,7 +85,7 @@ export default function ResetPassword() {
         >
           <LabeledTextfield
             id="password"
-            placeholder="at least 6 characters"
+            placeholder="at least 8 characters"
             required
             type="password"
             label="Password"
@@ -98,7 +98,7 @@ export default function ResetPassword() {
               id="Confirm password"
               required
               type="password"
-              placeholder="at least 6 characters"
+              placeholder="at least 8 characters"
               label="Confirm password"
               {...register('confirmPassword')}
               errorMessage={errors.confirmPassword?.message}
