@@ -7,10 +7,12 @@ import { BookModule } from './models/book/book.module';
 import { ReviewModule } from './models/review/review.module';
 import { StatusModule } from './status/status.module';
 import { LoggerModule } from './logger/logger.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule,
     PrismaModule,
     AuthModule,
     BookModule,
