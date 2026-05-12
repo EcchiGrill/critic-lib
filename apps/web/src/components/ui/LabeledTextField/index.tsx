@@ -8,7 +8,7 @@ import { StyledFormHelperText, StyledInput, StyledInputLabel } from './styles';
 
 interface LabeledTextfieldProps extends Omit<InputProps, 'error'> {
   label: string;
-  errorMessage?: string;
+  errorMessage?: string | null;
   reserveErrorSpace?: boolean;
 }
 
